@@ -52,7 +52,7 @@ impl CharDevice {
 
         #[cfg(windows)]
         {
-            let file_type = unsafe { winx::file::get_file_type(file.as_raw_handle())? };
+            let file_type = winapi_util::file::typ(&file)?;
             if !file_type.is_char() {
                 return Err(io::Error::new(
                     io::ErrorKind::Other,

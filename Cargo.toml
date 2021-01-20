@@ -20,7 +20,7 @@ unsafe-io = "0.2.0"
 posish = "0.5.6"
 
 [target.'cfg(windows)'.dependencies]
-winx = "0.22.0"
+winapi-util = "0.1.5"
 
 [features]
 default = []
