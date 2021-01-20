@@ -12,7 +12,7 @@
   </p>
 </div>
 
-This crate defines [`CharDevice`] trait, a wrapper around `std::fs::File` for
-character devices.
+This crate defines the [`CharDevice`] trait, a wrapper around `std::fs::File`
+for character devices.
 
 [`CharDevice`]: https://docs.rs/char-device/latest/char_device/struct.CharDevice.html
