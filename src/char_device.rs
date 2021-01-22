@@ -32,7 +32,7 @@ impl CharDevice {
     /// Construct a new `CharDevice`. Fail if the given handle isn't a valid
     /// handle for a character device, or it can't be determined.
     #[inline]
-    pub fn new<IUF: IntoUnsafeFile>(iuf: IUF) -> io::Result<Self> {
+    pub fn new<IUF: IntoUnsafeFile + Read + Write>(iuf: IUF) -> io::Result<Self> {
         Self::_new(iuf.into_unsafe_file())
     }
 
