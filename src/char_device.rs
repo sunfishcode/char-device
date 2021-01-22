@@ -82,6 +82,22 @@ impl CharDevice {
         Self(File::from_unsafe_file(fd.into_unsafe_file()))
     }
 
+    /// Construct a new `CharDevice` which discards writes and reads nothing.
+    ///
+    /// This is "/dev/null" on Posix-ish platforms and "nul" on Windows.
+    #[inline]
+    pub fn null() -> io::Result<Self> {
+        #[cfg(unix)]
+        {
+            Self::open("/dev/null")
+        }
+
+        #[cfg(windows)]
+        {
+            Self::open("nul")
+        }
+    }
+
     /// Creates a new independently owned handle to the underlying device.
     #[inline]
     pub fn try_clone(&self) -> io::Result<Self> {
