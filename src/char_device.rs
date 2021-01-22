@@ -10,7 +10,7 @@ use std::os::wasi::{
 };
 use std::{
     fmt::Arguments,
-    fs::File,
+    fs::{File, OpenOptions},
     io::{self, IoSlice, IoSliceMut, Read, Write},
     path::Path,
 };
@@ -69,7 +69,7 @@ impl CharDevice {
     /// determined.
     #[inline]
     pub fn open<P: AsRef<Path>>(path: P) -> io::Result<Self> {
-        Self::new(File::open(path)?)
+        Self::new(OpenOptions::new().read(true).write(true).open(path)?)
     }
 
     /// Construct a new `CharDevice`.
