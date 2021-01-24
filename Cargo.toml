@@ -14,7 +14,7 @@ readme = "README.md"
 rustc_version = "0.3.3"
 
 [dependencies]
-unsafe-io = "0.2.0"
+unsafe-io = "0.3.0"
 
 [target.'cfg(not(windows))'.dependencies]
 posish = "0.5.6"

@@ -14,7 +14,7 @@ use std::{
     io::{self, IoSlice, IoSliceMut, Read, Write},
     path::Path,
 };
-use unsafe_io::{FromUnsafeFile, IntoUnsafeFile, UnsafeFile};
+use unsafe_io::{FromUnsafeFile, IntoUnsafeFile};
 #[cfg(windows)]
 use {
     std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle},
@@ -32,13 +32,11 @@ impl CharDevice {
     /// Construct a new `CharDevice`. Fail if the given handle isn't a valid
     /// handle for a character device, or it can't be determined.
     #[inline]
-    pub fn new<IUF: IntoUnsafeFile + Read + Write>(iuf: IUF) -> io::Result<Self> {
-        Self::_new(iuf.into_unsafe_file())
+    pub fn new<Filelike: IntoUnsafeFile + Read + Write>(filelike: Filelike) -> io::Result<Self> {
+        Self::_new(File::from_filelike(filelike))
     }
 
-    fn _new(unsafe_file: UnsafeFile) -> io::Result<Self> {
-        let file = unsafe { File::from_unsafe_file(unsafe_file) };
-
+    fn _new(file: File) -> io::Result<Self> {
         #[cfg(not(windows))]
         {
             let file_type = file.metadata()?.file_type();
@@ -78,8 +76,8 @@ impl CharDevice {
     ///
     /// Doesn't check that the handle is valid or a character device.
     #[inline]
-    pub unsafe fn new_unchecked<Fd: IntoUnsafeFile>(fd: Fd) -> Self {
-        Self(File::from_unsafe_file(fd.into_unsafe_file()))
+    pub unsafe fn new_unchecked<Filelike: IntoUnsafeFile>(filelike: Filelike) -> Self {
+        Self(File::from_filelike(filelike))
     }
 
     /// Construct a new `CharDevice` which discards writes and reads nothing.
