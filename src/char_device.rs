@@ -23,7 +23,7 @@ use {
 
 /// An unbuffered character device.
 ///
-/// This is a wrapper around `std::fs::File` which is intended for use with
+/// This is a wrapper around [`std::fs::File`] which is intended for use with
 /// character device "files" such as "/dev/tty".
 #[derive(Debug)]
 pub struct CharDevice(std::fs::File);
