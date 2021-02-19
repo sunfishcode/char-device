@@ -26,6 +26,7 @@ use {
 /// This is a wrapper around [`std::fs::File`] which is intended for use with
 /// character device "files" such as "/dev/tty".
 #[derive(Debug)]
+#[repr(transparent)]
 pub struct CharDevice(std::fs::File);
 
 impl CharDevice {
