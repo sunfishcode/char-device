@@ -195,18 +195,18 @@ impl AsRawFd for CharDevice {
 }
 
 #[cfg(windows)]
-impl AsRawHandleOrSocket for CharDevice {
-    #[inline]
-    fn as_raw_handle_or_socket(&self) -> RawHandleOrSocket {
-        self.0.as_raw_handle_or_socket()
-    }
-}
-
-#[cfg(windows)]
 impl AsRawHandle for CharDevice {
     #[inline]
     fn as_raw_handle(&self) -> RawHandle {
         self.0.as_raw_handle()
+    }
+}
+
+#[cfg(windows)]
+impl AsRawHandleOrSocket for CharDevice {
+    #[inline]
+    fn as_raw_handle_or_socket(&self) -> RawHandleOrSocket {
+        self.0.as_raw_handle_or_socket()
     }
 }
 
