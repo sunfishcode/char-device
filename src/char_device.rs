@@ -1,24 +1,19 @@
-#[cfg(unix)]
-use std::os::unix::{
-    fs::FileTypeExt,
-    io::{AsRawFd, IntoRawFd, RawFd},
-};
-#[cfg(target_os = "wasi")]
-use std::os::wasi::{
-    fs::FileTypeExt,
-    io::{AsRawFd, IntoRawFd, RawFd},
-};
 use std::{
     fmt::Arguments,
     fs::{File, OpenOptions},
     io::{self, IoSlice, IoSliceMut, Read, Write},
     path::Path,
 };
-use unsafe_io::{FromUnsafeFile, IntoUnsafeFile};
+use unsafe_io::{FromUnsafeFile, IntoUnsafeFile, OwnsRaw};
+#[cfg(not(windows))]
+use {
+    posish::fs::FileTypeExt,
+    unsafe_io::os::posish::{AsRawFd, IntoRawFd, RawFd},
+};
 #[cfg(windows)]
 use {
     std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle},
-    unsafe_io::{AsRawHandleOrSocket, IntoRawHandleOrSocket, RawHandleOrSocket},
+    unsafe_io::os::windows::{AsRawHandleOrSocket, IntoRawHandleOrSocket, RawHandleOrSocket},
 };
 
 /// An unbuffered character device.
@@ -238,3 +233,6 @@ impl IntoRawHandleOrSocket for CharDevice {
         self.0.into_raw_handle_or_socket()
     }
 }
+
+// Safety: `CharDevice` wraps a `File` which owns its handle.
+unsafe impl OwnsRaw for CharDevice {}
