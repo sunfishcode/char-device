@@ -14,10 +14,10 @@ readme = "README.md"
 rustc_version = "0.3.3"
 
 [dependencies]
-unsafe-io = "0.5.0"
+unsafe-io = "0.6.0"
 
 [target.'cfg(not(windows))'.dependencies]
-posish = "0.5.12"
+posish = "0.6.0"
 
 [target.'cfg(windows)'.dependencies]
 winapi-util = "0.1.5"
