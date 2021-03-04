@@ -23,6 +23,9 @@ posish = "0.6.0"
 [target.'cfg(windows)'.dependencies]
 winapi-util = "0.1.5"
 
+[dev-dependencies]
+async-std = { version = "1.9.0", features = ["attributes"] }
+
 [target.'cfg(unix)'.dev-dependencies]
 libc = "0.2.82"
 
