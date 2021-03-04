@@ -11,7 +11,10 @@ use unsafe_io::{FromUnsafeFile, IntoUnsafeFile, OwnsRaw};
 #[cfg(windows)]
 use {
     ::async_std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle},
-    unsafe_io::os::windows::{AsRawHandleOrSocket, IntoRawHandleOrSocket, RawHandleOrSocket},
+    unsafe_io::{
+        os::windows::{AsRawHandleOrSocket, IntoRawHandleOrSocket, RawHandleOrSocket},
+        AsUnsafeFile,
+    },
 };
 #[cfg(not(windows))]
 use {
@@ -58,7 +61,7 @@ impl AsyncCharDevice {
 
         #[cfg(windows)]
         {
-            let file_type = winapi_util::file::typ(&file)?;
+            let file_type = winapi_util::file::typ(&*file.as_file_view())?;
             if !file_type.is_char() {
                 return Err(io::Error::new(
                     io::ErrorKind::Other,
