@@ -58,7 +58,7 @@ impl AsyncCharDevice {
 
         #[cfg(windows)]
         {
-            let file_type = winapi_util::file::typ(&file)?;
+            let file_type = winapi_util::file::typ(&file.as_file_view())?;
             if !file_type.is_char() {
                 return Err(io::Error::new(
                     io::ErrorKind::Other,
