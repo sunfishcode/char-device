@@ -1,4 +1,3 @@
-use io_close::Close;
 use std::{
     fmt::Arguments,
     fs::{File, OpenOptions},
@@ -184,13 +183,6 @@ impl Write for CharDevice {
     #[inline]
     fn write_fmt(&mut self, fmt: Arguments) -> io::Result<()> {
         self.0.write_fmt(fmt)
-    }
-}
-
-impl Close for CharDevice {
-    #[inline]
-    fn close(self) -> io::Result<()> {
-        Close::close(self.0)
     }
 }
 
