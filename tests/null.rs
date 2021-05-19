@@ -1,6 +1,8 @@
 #[cfg(feature = "async-std")]
-use char_device::AsyncCharDevice;
+use char_device::AsyncStdCharDevice;
 use char_device::CharDevice;
+#[cfg(feature = "tokio")]
+use char_device::TokioCharDevice;
 
 #[test]
 fn null() {
@@ -15,10 +17,22 @@ fn null() {
 
 #[cfg(feature = "async-std")]
 #[async_std::test]
-async fn async_null() {
+async fn async_std_null() {
     use async_std::io::prelude::{ReadExt, WriteExt};
 
-    let mut char_device = AsyncCharDevice::null().await.unwrap();
+    let mut char_device = AsyncStdCharDevice::null().await.unwrap();
+    char_device.write_all(b"abcdefg").await.unwrap();
+
+    let mut buf = vec![0_u8; 32];
+    assert_eq!(char_device.read(&mut buf).await.unwrap(), 0);
+}
+
+#[cfg(feature = "tokio")]
+#[tokio::test]
+async fn tokio_null() {
+    use tokio::io::{AsyncReadExt, AsyncWriteExt};
+
+    let mut char_device = TokioCharDevice::null().await.unwrap();
     char_device.write_all(b"abcdefg").await.unwrap();
 
     let mut buf = vec![0_u8; 32];
