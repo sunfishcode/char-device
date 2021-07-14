@@ -11,7 +11,7 @@ use std::{
 #[cfg(windows)]
 use {
     ::async_std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle},
-    io_lifetimes::{AsFilelike, AsHandle, BorrowedHandle},
+    io_lifetimes::{AsFilelike, AsHandle, BorrowedHandle, IntoHandle, OwnedHandle},
     unsafe_io::os::windows::{
         AsHandleOrSocket, AsRawHandleOrSocket, AsRawReadWriteHandleOrSocket,
         AsReadWriteHandleOrSocket, BorrowedHandleOrSocket, IntoHandleOrSocket,
@@ -20,7 +20,7 @@ use {
 };
 #[cfg(not(windows))]
 use {
-    io_lifetimes::{AsFd, BorrowedFd},
+    io_lifetimes::{AsFd, BorrowedFd, IntoFd, OwnedFd},
     posish::fs::FileTypeExt,
     unsafe_io::os::posish::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, IntoRawFd, RawFd},
 };
@@ -231,11 +231,27 @@ impl IntoRawFd for AsyncStdCharDevice {
     }
 }
 
+#[cfg(not(windows))]
+impl IntoFd for AsyncStdCharDevice {
+    #[inline]
+    fn into_fd(self) -> OwnedFd {
+        self.0.into_fd()
+    }
+}
+
 #[cfg(windows)]
 impl IntoRawHandle for AsyncStdCharDevice {
     #[inline]
     fn into_raw_handle(self) -> RawHandle {
         self.0.into_raw_handle()
+    }
+}
+
+#[cfg(windows)]
+impl IntoHandle for AsyncStdCharDevice {
+    #[inline]
+    fn into_handle(self) -> OwnedHandle {
+        self.0.into_handle()
     }
 }
 
