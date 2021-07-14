@@ -3,21 +3,20 @@ use async_std::{
     io::{self, IoSlice, IoSliceMut, Read, Write},
     path::Path,
 };
+use io_lifetimes::{FromFilelike, IntoFilelike};
 use std::{
     pin::Pin,
     task::{Context, Poll},
 };
-use unsafe_io::{FromUnsafeFile, IntoUnsafeFile, OwnsRaw};
 #[cfg(windows)]
 use {
     ::async_std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle},
-    unsafe_io::{
-        os::windows::{AsRawHandleOrSocket, IntoRawHandleOrSocket, RawHandleOrSocket},
-        AsUnsafeFile,
-    },
+    io_lifetimes::{AsFilelike, AsHandle, BorrowedHandle},
+    unsafe_io::os::windows::{AsRawHandleOrSocket, IntoRawHandleOrSocket, RawHandleOrSocket},
 };
 #[cfg(not(windows))]
 use {
+    io_lifetimes::{AsFd, BorrowedFd},
     posish::fs::FileTypeExt,
     unsafe_io::os::posish::{AsRawFd, IntoRawFd, RawFd},
 };
@@ -41,10 +40,10 @@ impl AsyncStdCharDevice {
     /// Construct a new `CharDevice`. Fail if the given handle isn't a valid
     /// handle for a character device, or it can't be determined.
     #[inline]
-    pub async fn new<Filelike: IntoUnsafeFile + Read + Write>(
+    pub async fn new<Filelike: IntoFilelike + Read + Write>(
         filelike: Filelike,
     ) -> io::Result<Self> {
-        Self::_new(File::from_filelike(filelike)).await
+        Self::_new(File::from_into_filelike(filelike)).await
     }
 
     async fn _new(file: File) -> io::Result<Self> {
@@ -61,7 +60,7 @@ impl AsyncStdCharDevice {
 
         #[cfg(windows)]
         {
-            let file_type = winapi_util::file::typ(&*file.as_file_view())?;
+            let file_type = winapi_util::file::typ(&*file.as_filelike_view::<std::fs::File>())?;
             if !file_type.is_char() {
                 return Err(io::Error::new(
                     io::ErrorKind::Other,
@@ -87,8 +86,8 @@ impl AsyncStdCharDevice {
     ///
     /// Doesn't check that the handle is valid or a character device.
     #[inline]
-    pub unsafe fn new_unchecked<Filelike: IntoUnsafeFile>(filelike: Filelike) -> Self {
-        Self(File::from_filelike(filelike))
+    pub unsafe fn new_unchecked<Filelike: IntoFilelike>(filelike: Filelike) -> Self {
+        Self(File::from_into_filelike(filelike))
     }
 
     /// Construct a new `CharDevice` which discards writes and reads nothing.
@@ -112,7 +111,7 @@ impl AsyncStdCharDevice {
     pub fn num_ready_bytes(&self) -> io::Result<u64> {
         #[cfg(not(windows))]
         {
-            posish::io::fionread(self)
+            Ok(posish::io::ioctl_fionread(self)?)
         }
 
         #[cfg(windows)]
@@ -197,6 +196,22 @@ impl AsRawHandleOrSocket for AsyncStdCharDevice {
 }
 
 #[cfg(not(windows))]
+impl AsFd for AsyncStdCharDevice {
+    #[inline]
+    fn as_fd(&self) -> BorrowedFd<'_> {
+        self.0.as_fd()
+    }
+}
+
+#[cfg(windows)]
+impl AsHandle for AsyncStdCharDevice {
+    #[inline]
+    fn as_handle(&self) -> BorrowedHandle<'_> {
+        self.0.as_handle()
+    }
+}
+
+#[cfg(not(windows))]
 impl IntoRawFd for AsyncStdCharDevice {
     #[inline]
     fn into_raw_fd(self) -> RawFd {
@@ -219,6 +234,3 @@ impl IntoRawHandleOrSocket for AsyncStdCharDevice {
         self.0.into_raw_handle_or_socket()
     }
 }
-
-// Safety: `CharDevice` wraps a `File` which owns its handle.
-unsafe impl OwnsRaw for AsyncStdCharDevice {}

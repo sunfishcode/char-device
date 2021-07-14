@@ -1,17 +1,19 @@
+use io_lifetimes::{FromFilelike, IntoFilelike};
 use std::{
     fmt::Arguments,
     fs::{File, OpenOptions},
     io::{self, IoSlice, IoSliceMut, Read, Write},
     path::Path,
 };
-use unsafe_io::{FromUnsafeFile, IntoUnsafeFile, OwnsRaw};
 #[cfg(not(windows))]
 use {
+    io_lifetimes::{AsFd, BorrowedFd, IntoFd, OwnedFd},
     posish::fs::FileTypeExt,
     unsafe_io::os::posish::{AsRawFd, IntoRawFd, RawFd},
 };
 #[cfg(windows)]
 use {
+    io_lifetimes::{AsHandle, BorrowedHandle, IntoHandle, OwnedHandle},
     std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle},
     unsafe_io::os::windows::{AsRawHandleOrSocket, IntoRawHandleOrSocket, RawHandleOrSocket},
 };
@@ -28,8 +30,8 @@ impl CharDevice {
     /// Construct a new `CharDevice`. Fail if the given handle isn't a valid
     /// handle for a character device, or it can't be determined.
     #[inline]
-    pub fn new<Filelike: IntoUnsafeFile + Read + Write>(filelike: Filelike) -> io::Result<Self> {
-        Self::_new(File::from_filelike(filelike))
+    pub fn new<Filelike: IntoFilelike + Read + Write>(filelike: Filelike) -> io::Result<Self> {
+        Self::_new(File::from_into_filelike(filelike))
     }
 
     fn _new(file: File) -> io::Result<Self> {
@@ -72,8 +74,8 @@ impl CharDevice {
     ///
     /// Doesn't check that the handle is valid or a character device.
     #[inline]
-    pub unsafe fn new_unchecked<Filelike: IntoUnsafeFile>(filelike: Filelike) -> Self {
-        Self(File::from_filelike(filelike))
+    pub unsafe fn new_unchecked<Filelike: IntoFilelike>(filelike: Filelike) -> Self {
+        Self(File::from_into_filelike(filelike))
     }
 
     /// Construct a new `CharDevice` which discards writes and reads nothing.
@@ -103,7 +105,7 @@ impl CharDevice {
     pub fn num_ready_bytes(&self) -> io::Result<u64> {
         #[cfg(not(windows))]
         {
-            posish::io::fionread(self)
+            Ok(posish::io::ioctl_fionread(self)?)
         }
 
         #[cfg(windows)]
@@ -194,11 +196,27 @@ impl AsRawFd for CharDevice {
     }
 }
 
+#[cfg(not(windows))]
+impl AsFd for CharDevice {
+    #[inline]
+    fn as_fd(&self) -> BorrowedFd<'_> {
+        self.0.as_fd()
+    }
+}
+
 #[cfg(windows)]
 impl AsRawHandle for CharDevice {
     #[inline]
     fn as_raw_handle(&self) -> RawHandle {
         self.0.as_raw_handle()
+    }
+}
+
+#[cfg(windows)]
+impl AsHandle for CharDevice {
+    #[inline]
+    fn as_handle(&self) -> BorrowedHandle<'_> {
+        self.0.as_handle()
     }
 }
 
@@ -218,11 +236,27 @@ impl IntoRawFd for CharDevice {
     }
 }
 
+#[cfg(not(windows))]
+impl IntoFd for CharDevice {
+    #[inline]
+    fn into_fd(self) -> OwnedFd {
+        self.0.into_fd()
+    }
+}
+
 #[cfg(windows)]
 impl IntoRawHandle for CharDevice {
     #[inline]
     fn into_raw_handle(self) -> RawHandle {
         self.0.into_raw_handle()
+    }
+}
+
+#[cfg(windows)]
+impl IntoHandle for CharDevice {
+    #[inline]
+    fn into_handle(self) -> OwnedHandle {
+        self.0.into_handle()
     }
 }
 
@@ -233,6 +267,3 @@ impl IntoRawHandleOrSocket for CharDevice {
         self.0.into_raw_handle_or_socket()
     }
 }
-
-// Safety: `CharDevice` wraps a `File` which owns its handle.
-unsafe impl OwnsRaw for CharDevice {}
