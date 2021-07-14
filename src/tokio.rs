@@ -19,7 +19,9 @@ use {
 use {
     io_lifetimes::{AsFilelike, AsHandle, BorrowedHandle},
     std::os::windows::io::{AsRawHandle, RawHandle},
-    unsafe_io::os::windows::{AsRawHandleOrSocket, RawHandleOrSocket},
+    unsafe_io::os::windows::{
+        AsHandleOrSocket, AsRawHandleOrSocket, BorrowedHandleOrSocket, RawHandleOrSocket,
+    },
 };
 
 /// An unbuffered character device.
@@ -197,5 +199,13 @@ impl AsHandle for TokioCharDevice {
     #[inline]
     fn as_handle(&self) -> BorrowedHandle<'_> {
         self.0.as_handle()
+    }
+}
+
+#[cfg(windows)]
+impl AsHandleOrSocket for TokioCharDevice {
+    #[inline]
+    fn as_handle_or_socket(&self) -> BorrowedHandleOrSocket<'_> {
+        BorrowedHandleOrSocket::from_handle(self.0.as_handle())
     }
 }

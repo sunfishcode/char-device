@@ -12,7 +12,10 @@ use std::{
 use {
     ::async_std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle},
     io_lifetimes::{AsFilelike, AsHandle, BorrowedHandle},
-    unsafe_io::os::windows::{AsRawHandleOrSocket, IntoRawHandleOrSocket, RawHandleOrSocket},
+    unsafe_io::os::windows::{
+        AsHandleOrSocket, AsRawHandleOrSocket, BorrowedHandleOrSocket, IntoHandleOrSocket,
+        IntoRawHandleOrSocket, OwnedHandleOrSocket, RawHandleOrSocket,
+    },
 };
 #[cfg(not(windows))]
 use {
@@ -211,6 +214,14 @@ impl AsHandle for AsyncStdCharDevice {
     }
 }
 
+#[cfg(windows)]
+impl AsHandleOrSocket for AsyncStdCharDevice {
+    #[inline]
+    fn as_handle_or_socket(&self) -> BorrowedHandleOrSocket<'_> {
+        self.0.as_handle_or_socket()
+    }
+}
+
 #[cfg(not(windows))]
 impl IntoRawFd for AsyncStdCharDevice {
     #[inline]
@@ -232,5 +243,13 @@ impl IntoRawHandleOrSocket for AsyncStdCharDevice {
     #[inline]
     fn into_raw_handle_or_socket(self) -> RawHandleOrSocket {
         self.0.into_raw_handle_or_socket()
+    }
+}
+
+#[cfg(windows)]
+impl IntoHandleOrSocket for AsyncStdCharDevice {
+    #[inline]
+    fn into_handle_or_socket(self) -> OwnedHandleOrSocket {
+        self.0.into_handle_or_socket()
     }
 }

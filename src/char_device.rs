@@ -15,7 +15,10 @@ use {
 use {
     io_lifetimes::{AsHandle, BorrowedHandle, IntoHandle, OwnedHandle},
     std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle},
-    unsafe_io::os::windows::{AsRawHandleOrSocket, IntoRawHandleOrSocket, RawHandleOrSocket},
+    unsafe_io::os::windows::{
+        AsHandleOrSocket, AsRawHandleOrSocket, BorrowedHandleOrSocket, IntoHandleOrSocket,
+        IntoRawHandleOrSocket, OwnedHandleOrSocket, RawHandleOrSocket,
+    },
 };
 
 /// An unbuffered character device.
@@ -221,6 +224,14 @@ impl AsHandle for CharDevice {
 }
 
 #[cfg(windows)]
+impl AsHandleOrSocket for CharDevice {
+    #[inline]
+    fn as_handle_or_socket(&self) -> BorrowedHandleOrSocket<'_> {
+        BorrowedHandleOrSocket::from_handle(self.0.as_handle())
+    }
+}
+
+#[cfg(windows)]
 impl AsRawHandleOrSocket for CharDevice {
     #[inline]
     fn as_raw_handle_or_socket(&self) -> RawHandleOrSocket {
@@ -265,5 +276,13 @@ impl IntoRawHandleOrSocket for CharDevice {
     #[inline]
     fn into_raw_handle_or_socket(self) -> RawHandleOrSocket {
         self.0.into_raw_handle_or_socket()
+    }
+}
+
+#[cfg(windows)]
+impl IntoHandleOrSocket for CharDevice {
+    #[inline]
+    fn into_handle_or_socket(self) -> OwnedHandleOrSocket {
+        self.0.into_handle_or_socket()
     }
 }
