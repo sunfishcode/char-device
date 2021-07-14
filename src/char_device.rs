@@ -9,14 +9,15 @@ use std::{
 use {
     io_lifetimes::{AsFd, BorrowedFd, IntoFd, OwnedFd},
     posish::fs::FileTypeExt,
-    unsafe_io::os::posish::{AsRawFd, IntoRawFd, RawFd},
+    unsafe_io::os::posish::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, IntoRawFd, RawFd},
 };
 #[cfg(windows)]
 use {
     io_lifetimes::{AsHandle, BorrowedHandle, IntoHandle, OwnedHandle},
     std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle},
     unsafe_io::os::windows::{
-        AsHandleOrSocket, AsRawHandleOrSocket, BorrowedHandleOrSocket, IntoHandleOrSocket,
+        AsHandleOrSocket, AsRawHandleOrSocket, AsRawReadWriteHandleOrSocket,
+        AsReadWriteHandleOrSocket, BorrowedHandleOrSocket, IntoHandleOrSocket,
         IntoRawHandleOrSocket, OwnedHandleOrSocket, RawHandleOrSocket,
     },
 };
@@ -284,5 +285,57 @@ impl IntoHandleOrSocket for CharDevice {
     #[inline]
     fn into_handle_or_socket(self) -> OwnedHandleOrSocket {
         self.0.into_handle_or_socket()
+    }
+}
+
+#[cfg(not(windows))]
+impl AsRawReadWriteFd for CharDevice {
+    #[inline]
+    fn as_raw_read_fd(&self) -> RawFd {
+        self.as_raw_fd()
+    }
+
+    #[inline]
+    fn as_raw_write_fd(&self) -> RawFd {
+        self.as_raw_fd()
+    }
+}
+
+#[cfg(not(windows))]
+impl AsReadWriteFd for CharDevice {
+    #[inline]
+    fn as_read_fd(&self) -> BorrowedFd<'_> {
+        self.as_fd()
+    }
+
+    #[inline]
+    fn as_write_fd(&self) -> BorrowedFd<'_> {
+        self.as_fd()
+    }
+}
+
+#[cfg(windows)]
+impl AsRawReadWriteHandleOrSocket for CharDevice {
+    #[inline]
+    fn as_raw_read_handle_or_socket(&self) -> RawHandleOrSocket {
+        self.as_raw_handle_or_socket()
+    }
+
+    #[inline]
+    fn as_raw_write_handle_or_socket(&self) -> RawHandleOrSocket {
+        self.as_raw_handle_or_socket()
+    }
+}
+
+#[cfg(windows)]
+impl AsReadWriteHandleOrSocket for CharDevice {
+    #[inline]
+    fn as_read_handle_or_socket(&self) -> BorrowedHandleOrSocket<'_> {
+        self.as_handle_or_socket()
+    }
+
+    #[inline]
+    fn as_write_handle_or_socket(&self) -> BorrowedHandleOrSocket<'_> {
+        self.as_handle_or_socket()
     }
 }
