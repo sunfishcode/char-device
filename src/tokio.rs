@@ -12,8 +12,8 @@ use tokio::{
 #[cfg(not(windows))]
 use {
     io_lifetimes::{AsFd, BorrowedFd},
-    posish::fs::FileTypeExt,
-    unsafe_io::os::posish::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, RawFd},
+    rsix::fs::FileTypeExt,
+    unsafe_io::os::rsix::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, RawFd},
 };
 #[cfg(windows)]
 use {
@@ -112,7 +112,7 @@ impl TokioCharDevice {
     pub fn num_ready_bytes(&self) -> io::Result<u64> {
         #[cfg(not(windows))]
         {
-            Ok(posish::io::ioctl_fionread(self)?)
+            Ok(rsix::io::ioctl_fionread(self)?)
         }
 
         #[cfg(windows)]

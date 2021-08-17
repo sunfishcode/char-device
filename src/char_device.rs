@@ -8,8 +8,8 @@ use std::{
 #[cfg(not(windows))]
 use {
     io_lifetimes::{AsFd, BorrowedFd, IntoFd, OwnedFd},
-    posish::fs::FileTypeExt,
-    unsafe_io::os::posish::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, IntoRawFd, RawFd},
+    rsix::fs::FileTypeExt,
+    unsafe_io::os::rsix::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, IntoRawFd, RawFd},
 };
 #[cfg(windows)]
 use {
@@ -109,7 +109,7 @@ impl CharDevice {
     pub fn num_ready_bytes(&self) -> io::Result<u64> {
         #[cfg(not(windows))]
         {
-            Ok(posish::io::ioctl_fionread(self)?)
+            Ok(rsix::io::ioctl_fionread(self)?)
         }
 
         #[cfg(windows)]
