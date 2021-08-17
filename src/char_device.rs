@@ -1,10 +1,8 @@
 use io_lifetimes::{FromFilelike, IntoFilelike};
-use std::{
-    fmt::Arguments,
-    fs::{File, OpenOptions},
-    io::{self, IoSlice, IoSliceMut, Read, Write},
-    path::Path,
-};
+use std::fmt::Arguments;
+use std::fs::{File, OpenOptions};
+use std::io::{self, IoSlice, IoSliceMut, Read, Write};
+use std::path::Path;
 #[cfg(not(windows))]
 use {
     io_lifetimes::{AsFd, BorrowedFd, IntoFd, OwnedFd},

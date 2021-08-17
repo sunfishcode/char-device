@@ -1,13 +1,9 @@
-use async_std::{
-    fs::{File, OpenOptions},
-    io::{self, IoSlice, IoSliceMut, Read, Write},
-    path::Path,
-};
+use async_std::fs::{File, OpenOptions};
+use async_std::io::{self, IoSlice, IoSliceMut, Read, Write};
+use async_std::path::Path;
 use io_lifetimes::{FromFilelike, IntoFilelike};
-use std::{
-    pin::Pin,
-    task::{Context, Poll},
-};
+use std::pin::Pin;
+use std::task::{Context, Poll};
 #[cfg(windows)]
 use {
     ::async_std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle},

@@ -1,14 +1,10 @@
 use io_lifetimes::{FromFilelike, IntoFilelike};
-use std::{
-    io::IoSlice,
-    path::Path,
-    pin::Pin,
-    task::{Context, Poll},
-};
-use tokio::{
-    fs::{File, OpenOptions},
-    io::{self, AsyncRead, AsyncWrite, ReadBuf},
-};
+use std::io::IoSlice;
+use std::path::Path;
+use std::pin::Pin;
+use std::task::{Context, Poll};
+use tokio::fs::{File, OpenOptions};
+use tokio::io::{self, AsyncRead, AsyncWrite, ReadBuf};
 #[cfg(not(windows))]
 use {
     io_lifetimes::{AsFd, BorrowedFd},
