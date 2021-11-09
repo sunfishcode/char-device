@@ -29,10 +29,7 @@ use {
 /// TODO: "Unbuffered" here isn't entirely accurate, given how async-std deals
 /// with the underlying OS APIs being effectively synchronous. Figure out what
 /// to say here.
-///
-/// TODO: Make this `Clone` once async-std releases with
-/// https://github.com/async-rs/async-std/pull/937
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[repr(transparent)]
 pub struct AsyncStdCharDevice(async_std::fs::File);
 
