@@ -8,7 +8,7 @@ use char_device::TokioCharDevice;
 
 #[test]
 fn tty() {
-    const NXIO: i32 = rsix::io::Error::NXIO.raw_os_error();
+    const NXIO: i32 = rustix::io::Error::NXIO.raw_os_error();
 
     // For now, just ensure that we can open this.
     let _tty = match CharDevice::open("/dev/tty") {
@@ -24,7 +24,7 @@ fn tty() {
 #[cfg(feature = "async-std")]
 #[async_std::test]
 async fn async_std_tty() {
-    const NXIO: i32 = rsix::io::Error::NXIO.raw_os_error();
+    const NXIO: i32 = rustix::io::Error::NXIO.raw_os_error();
 
     // For now, just ensure that we can open this.
     let _tty = match AsyncStdCharDevice::open("/dev/tty").await {
@@ -40,7 +40,7 @@ async fn async_std_tty() {
 #[cfg(feature = "tokio")]
 #[tokio::test]
 async fn tokio_tty() {
-    const NXIO: i32 = rsix::io::Error::NXIO.raw_os_error();
+    const NXIO: i32 = rustix::io::Error::NXIO.raw_os_error();
 
     // For now, just ensure that we can open this.
     let _tty = match TokioCharDevice::open("/dev/tty").await {

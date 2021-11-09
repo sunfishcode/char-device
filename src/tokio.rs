@@ -8,8 +8,8 @@ use tokio::io::{self, AsyncRead, AsyncWrite, ReadBuf};
 #[cfg(not(windows))]
 use {
     io_lifetimes::{AsFd, BorrowedFd},
-    rsix::fs::FileTypeExt,
-    unsafe_io::os::rsix::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, RawFd},
+    rustix::fs::FileTypeExt,
+    unsafe_io::os::rustix::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, RawFd},
 };
 #[cfg(windows)]
 use {
@@ -108,7 +108,7 @@ impl TokioCharDevice {
     pub fn num_ready_bytes(&self) -> io::Result<u64> {
         #[cfg(not(windows))]
         {
-            Ok(rsix::io::ioctl_fionread(self)?)
+            Ok(rustix::io::ioctl_fionread(self)?)
         }
 
         #[cfg(windows)]

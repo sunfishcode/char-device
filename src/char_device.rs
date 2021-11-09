@@ -6,8 +6,8 @@ use std::path::Path;
 #[cfg(not(windows))]
 use {
     io_lifetimes::{AsFd, BorrowedFd, IntoFd, OwnedFd},
-    rsix::fs::FileTypeExt,
-    unsafe_io::os::rsix::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, IntoRawFd, RawFd},
+    rustix::fs::FileTypeExt,
+    unsafe_io::os::rustix::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, IntoRawFd, RawFd},
 };
 #[cfg(windows)]
 use {
@@ -107,7 +107,7 @@ impl CharDevice {
     pub fn num_ready_bytes(&self) -> io::Result<u64> {
         #[cfg(not(windows))]
         {
-            Ok(rsix::io::ioctl_fionread(self)?)
+            Ok(rustix::io::ioctl_fionread(self)?)
         }
 
         #[cfg(windows)]
