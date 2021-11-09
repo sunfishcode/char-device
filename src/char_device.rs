@@ -5,19 +5,19 @@ use std::io::{self, IoSlice, IoSliceMut, Read, Write};
 use std::path::Path;
 #[cfg(not(windows))]
 use {
+    io_extras::os::rustix::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, IntoRawFd, RawFd},
     io_lifetimes::{AsFd, BorrowedFd, IntoFd, OwnedFd},
     rustix::fs::FileTypeExt,
-    unsafe_io::os::rustix::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, IntoRawFd, RawFd},
 };
 #[cfg(windows)]
 use {
-    io_lifetimes::{AsHandle, BorrowedHandle, IntoHandle, OwnedHandle},
-    std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle},
-    unsafe_io::os::windows::{
+    io_extras::os::windows::{
         AsHandleOrSocket, AsRawHandleOrSocket, AsRawReadWriteHandleOrSocket,
         AsReadWriteHandleOrSocket, BorrowedHandleOrSocket, IntoHandleOrSocket,
         IntoRawHandleOrSocket, OwnedHandleOrSocket, RawHandleOrSocket,
     },
+    io_lifetimes::{AsHandle, BorrowedHandle, IntoHandle, OwnedHandle},
+    std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle},
 };
 
 /// An unbuffered character device.

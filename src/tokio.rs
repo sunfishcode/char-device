@@ -7,18 +7,18 @@ use tokio::fs::{File, OpenOptions};
 use tokio::io::{self, AsyncRead, AsyncWrite, ReadBuf};
 #[cfg(not(windows))]
 use {
+    io_extras::os::rustix::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, RawFd},
     io_lifetimes::{AsFd, BorrowedFd},
     rustix::fs::FileTypeExt,
-    unsafe_io::os::rustix::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, RawFd},
 };
 #[cfg(windows)]
 use {
-    io_lifetimes::{AsFilelike, AsHandle, BorrowedHandle},
-    std::os::windows::io::{AsRawHandle, RawHandle},
-    unsafe_io::os::windows::{
+    io_extras::os::windows::{
         AsHandleOrSocket, AsRawHandleOrSocket, AsRawReadWriteHandleOrSocket,
         AsReadWriteHandleOrSocket, BorrowedHandleOrSocket, RawHandleOrSocket,
     },
+    io_lifetimes::{AsFilelike, AsHandle, BorrowedHandle},
+    std::os::windows::io::{AsRawHandle, RawHandle},
 };
 
 /// An unbuffered character device.

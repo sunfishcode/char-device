@@ -7,18 +7,18 @@ use std::task::{Context, Poll};
 #[cfg(windows)]
 use {
     ::async_std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle},
-    io_lifetimes::{AsFilelike, AsHandle, BorrowedHandle, IntoHandle, OwnedHandle},
-    unsafe_io::os::windows::{
+    io_extras::os::windows::{
         AsHandleOrSocket, AsRawHandleOrSocket, AsRawReadWriteHandleOrSocket,
         AsReadWriteHandleOrSocket, BorrowedHandleOrSocket, IntoHandleOrSocket,
         IntoRawHandleOrSocket, OwnedHandleOrSocket, RawHandleOrSocket,
     },
+    io_lifetimes::{AsFilelike, AsHandle, BorrowedHandle, IntoHandle, OwnedHandle},
 };
 #[cfg(not(windows))]
 use {
+    io_extras::os::rustix::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, IntoRawFd, RawFd},
     io_lifetimes::{AsFd, BorrowedFd, IntoFd, OwnedFd},
     rustix::fs::FileTypeExt,
-    unsafe_io::os::rustix::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, IntoRawFd, RawFd},
 };
 
 /// An unbuffered character device.
