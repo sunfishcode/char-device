@@ -12,12 +12,12 @@ use {
         AsReadWriteHandleOrSocket, BorrowedHandleOrSocket, IntoHandleOrSocket,
         IntoRawHandleOrSocket, OwnedHandleOrSocket, RawHandleOrSocket,
     },
-    io_lifetimes::{AsFilelike, AsHandle, BorrowedHandle, IntoHandle, OwnedHandle},
+    io_lifetimes::{AsFilelike, AsHandle, BorrowedHandle, OwnedHandle},
 };
 #[cfg(not(windows))]
 use {
     io_extras::os::rustix::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, IntoRawFd, RawFd},
-    io_lifetimes::{AsFd, BorrowedFd, IntoFd, OwnedFd},
+    io_lifetimes::{AsFd, BorrowedFd, OwnedFd},
     rustix::fs::FileTypeExt,
 };
 
@@ -225,10 +225,10 @@ impl IntoRawFd for AsyncStdCharDevice {
 }
 
 #[cfg(not(windows))]
-impl IntoFd for AsyncStdCharDevice {
+impl From<AsyncStdCharDevice> for OwnedFd {
     #[inline]
-    fn into_fd(self) -> OwnedFd {
-        self.0.into_fd()
+    fn from(device: AsyncStdCharDevice) -> OwnedFd {
+        device.0.into()
     }
 }
 
@@ -241,10 +241,10 @@ impl IntoRawHandle for AsyncStdCharDevice {
 }
 
 #[cfg(windows)]
-impl IntoHandle for AsyncStdCharDevice {
+impl From<AsyncStdCharDevice> for OwnedHandle {
     #[inline]
-    fn into_handle(self) -> OwnedHandle {
-        self.0.into_handle()
+    fn from(device: AsyncStdCharDevice) -> OwnedHandle {
+        device.0.into()
     }
 }
 
