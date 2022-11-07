@@ -6,7 +6,7 @@ use std::path::Path;
 #[cfg(not(windows))]
 use {
     io_extras::os::rustix::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, IntoRawFd, RawFd},
-    io_lifetimes::{AsFd, BorrowedFd, IntoFd, OwnedFd},
+    io_lifetimes::{AsFd, BorrowedFd, OwnedFd},
     rustix::fs::FileTypeExt,
 };
 #[cfg(windows)]
@@ -16,7 +16,7 @@ use {
         AsReadWriteHandleOrSocket, BorrowedHandleOrSocket, IntoHandleOrSocket,
         IntoRawHandleOrSocket, OwnedHandleOrSocket, RawHandleOrSocket,
     },
-    io_lifetimes::{AsHandle, BorrowedHandle, IntoHandle, OwnedHandle},
+    io_lifetimes::{AsHandle, BorrowedHandle, OwnedHandle},
     std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle},
 };
 
@@ -247,10 +247,10 @@ impl IntoRawFd for CharDevice {
 }
 
 #[cfg(not(windows))]
-impl IntoFd for CharDevice {
+impl From<CharDevice> for OwnedFd {
     #[inline]
-    fn into_fd(self) -> OwnedFd {
-        self.0.into_fd()
+    fn from(char_device: CharDevice) -> OwnedFd {
+        char_device.0.into()
     }
 }
 
@@ -263,10 +263,10 @@ impl IntoRawHandle for CharDevice {
 }
 
 #[cfg(windows)]
-impl IntoHandle for CharDevice {
+impl From<CharDevice> for OwnedHandle {
     #[inline]
-    fn into_handle(self) -> OwnedHandle {
-        self.0.into_handle()
+    fn from(char_device: CharDevice) -> OwnedHandle {
+        char_device.0.into()
     }
 }
 
