@@ -15,4 +15,7 @@
 This crate defines the [`CharDevice`] struct, a simple wrapper around
 `std::fs::File` for character devices.
 
+Support for async-std and tokio is temporarily disabled until those crates
+contain the needed implementations of the I/O safety traits.
+
 [`CharDevice`]: https://docs.rs/char-device/latest/char_device/struct.CharDevice.html
