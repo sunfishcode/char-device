@@ -13,8 +13,8 @@ use {
 use {
     io_extras::os::windows::{
         AsHandleOrSocket, AsRawHandleOrSocket, AsRawReadWriteHandleOrSocket,
-        AsReadWriteHandleOrSocket, BorrowedHandleOrSocket, IntoHandleOrSocket,
-        IntoRawHandleOrSocket, OwnedHandleOrSocket, RawHandleOrSocket,
+        AsReadWriteHandleOrSocket, BorrowedHandleOrSocket, IntoRawHandleOrSocket,
+        OwnedHandleOrSocket, RawHandleOrSocket,
     },
     io_lifetimes::{AsHandle, BorrowedHandle, OwnedHandle},
     std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle},
@@ -279,10 +279,10 @@ impl IntoRawHandleOrSocket for CharDevice {
 }
 
 #[cfg(windows)]
-impl IntoHandleOrSocket for CharDevice {
+impl From<CharDevice> for OwnedHandleOrSocket {
     #[inline]
-    fn into_handle_or_socket(self) -> OwnedHandleOrSocket {
-        self.0.into_handle_or_socket()
+    fn from(char_device: CharDevice) -> Self {
+        char_device.0.into()
     }
 }
 
