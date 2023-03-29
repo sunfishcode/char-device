@@ -20,7 +20,7 @@ io-lifetimes = { version = "1.0.0", default-features = false }
 rustix = { version = "0.37.0", features = ["fs"] }
 
 [target.'cfg(windows)'.dependencies]
-winapi-util = "0.1.5"
+winx = "0.35.0"
 
 [dev-dependencies]
 async-std = { version = "1.10.0", features = ["attributes"] }
@@ -28,5 +28,5 @@ tokio = { version = "1.6.0", features = ["io-util", "macros", "rt"] }
 
 [features]
 default = []
-use_async_std = ["async-std", "io-extras/async-std", "io-lifetimes/async-std"]
+use_async_std = ["async-std", "io-extras/async-std"]
 use_tokio = ["tokio", "io-extras/tokio", "io-lifetimes/tokio"]

@@ -57,7 +57,7 @@ impl TokioCharDevice {
 
         #[cfg(windows)]
         {
-            let file_type = winapi_util::file::typ(&*file.as_filelike_view::<std::fs::File>())?;
+            let file_type = winx::winapi_util::file::typ(&*file.as_filelike_view::<std::fs::File>())?;
             if !file_type.is_char() {
                 return Err(io::Error::new(
                     io::ErrorKind::Other,

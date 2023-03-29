@@ -50,7 +50,7 @@ impl CharDevice {
 
         #[cfg(windows)]
         {
-            let file_type = winapi_util::file::typ(&file)?;
+            let file_type = winx::winapi_util::file::typ(&file)?;
             if !file_type.is_char() {
                 return Err(io::Error::new(
                     io::ErrorKind::Other,
