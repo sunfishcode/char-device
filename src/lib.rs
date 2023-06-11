@@ -3,7 +3,6 @@
 #![deny(missing_docs)]
 #![cfg_attr(can_vector, feature(can_vector))]
 #![cfg_attr(write_all_vectored, feature(write_all_vectored))]
-#![cfg_attr(io_lifetimes_use_std, feature(io_safety))]
 
 /*
 #[cfg(feature = "async-std")]
