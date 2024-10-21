@@ -1,14 +1,10 @@
 #![cfg(unix)]
 
-/*
 #[cfg(feature = "async-std")]
 use char_device::AsyncStdCharDevice;
-*/
 use char_device::CharDevice;
-/*
 #[cfg(feature = "tokio")]
 use char_device::TokioCharDevice;
-*/
 
 #[test]
 fn tty() {
@@ -25,7 +21,6 @@ fn tty() {
     };
 }
 
-/*
 #[cfg(feature = "async-std")]
 #[async_std::test]
 async fn async_std_tty() {
@@ -57,4 +52,3 @@ async fn tokio_tty() {
         },
     };
 }
-*/
