@@ -40,7 +40,7 @@ impl TokioCharDevice {
     pub async fn new<Filelike: IntoFilelike + AsyncRead + AsyncWrite>(
         filelike: Filelike,
     ) -> io::Result<Self> {
-        Self::_new(File::from_std(filelike)).await
+        Self::_new(File::from_into_filelike(filelike)).await
     }
 
     async fn _new(file: File) -> io::Result<Self> {
