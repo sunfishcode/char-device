@@ -40,7 +40,7 @@ impl TokioCharDevice {
     pub async fn new<Filelike: IntoFilelike + AsyncRead + AsyncWrite>(
         filelike: Filelike,
     ) -> io::Result<Self> {
-        Self::_new(File::from_into_filelike(filelike)).await
+        Self::_new(File::from_std(filelike)).await
     }
 
     async fn _new(file: File) -> io::Result<Self> {
@@ -57,7 +57,8 @@ impl TokioCharDevice {
 
         #[cfg(windows)]
         {
-            let file_type = winx::winapi_util::file::typ(&*file.as_filelike_view::<std::fs::File>())?;
+            let file_type =
+                winx::winapi_util::file::typ(&*file.as_filelike_view::<std::fs::File>())?;
             if !file_type.is_char() {
                 return Err(io::Error::new(
                     io::ErrorKind::Other,
