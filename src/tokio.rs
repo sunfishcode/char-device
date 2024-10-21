@@ -9,7 +9,7 @@ use tokio::io::{self, AsyncRead, AsyncWrite, ReadBuf};
 #[cfg(not(windows))]
 use {
     io_extras::os::rustix::{AsRawFd, AsRawReadWriteFd, AsReadWriteFd, RawFd},
-    io_lifetimes::AsFd, // io_lifetimes::{AsFd, BorrowedFd},
+    io_lifetimes::AsFd,
     rustix::fs::FileTypeExt,
 };
 #[cfg(windows)]
