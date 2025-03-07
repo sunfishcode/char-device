@@ -9,8 +9,8 @@ use {
     ::async_std::os::windows::io::{AsRawHandle, IntoRawHandle, RawHandle},
     io_extras::os::windows::{
         AsHandleOrSocket, AsRawHandleOrSocket, AsRawReadWriteHandleOrSocket,
-        AsReadWriteHandleOrSocket, BorrowedHandleOrSocket,
-        IntoRawHandleOrSocket, OwnedHandleOrSocket, RawHandleOrSocket,
+        AsReadWriteHandleOrSocket, BorrowedHandleOrSocket, IntoRawHandleOrSocket,
+        OwnedHandleOrSocket, RawHandleOrSocket,
     },
     io_lifetimes::{AsFilelike, AsHandle, BorrowedHandle, OwnedHandle},
 };
@@ -57,7 +57,8 @@ impl AsyncStdCharDevice {
 
         #[cfg(windows)]
         {
-            let file_type = winx::winapi_util::file::typ(&*file.as_filelike_view::<std::fs::File>())?;
+            let file_type =
+                winx::winapi_util::file::typ(&*file.as_filelike_view::<std::fs::File>())?;
             if !file_type.is_char() {
                 return Err(io::Error::new(
                     io::ErrorKind::Other,
@@ -257,7 +258,7 @@ impl IntoRawHandleOrSocket for AsyncStdCharDevice {
 }
 
 #[cfg(windows)]
-impl From<AsyncStdCharDevice> for OwnedHandleOrSocket  {
+impl From<AsyncStdCharDevice> for OwnedHandleOrSocket {
     #[inline]
     fn from(char_device: AsyncStdCharDevice) -> Self {
         char_device.0.into()
