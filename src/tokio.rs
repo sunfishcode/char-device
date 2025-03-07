@@ -1,4 +1,4 @@
-use io_lifetimes::{FromFilelike, IntoFilelike};
+use io_lifetimes::IntoFilelike;
 use std::io::IoSlice;
 use std::path::Path;
 use std::pin::Pin;
@@ -40,7 +40,8 @@ impl TokioCharDevice {
     pub async fn new<Filelike: IntoFilelike + AsyncRead + AsyncWrite>(
         filelike: Filelike,
     ) -> io::Result<Self> {
-        Self::_new(File::from_into_filelike(filelike)).await
+        let std_file = std::fs::File::from(filelike.into_filelike());
+        Self::_new(File::from_std(std_file)).await
     }
 
     async fn _new(file: File) -> io::Result<Self> {
@@ -57,7 +58,8 @@ impl TokioCharDevice {
 
         #[cfg(windows)]
         {
-            let file_type = winx::winapi_util::file::typ(&*file.as_filelike_view::<std::fs::File>())?;
+            let file_type =
+                winx::winapi_util::file::typ(&*file.as_filelike_view::<std::fs::File>())?;
             if !file_type.is_char() {
                 return Err(io::Error::new(
                     io::ErrorKind::Other,
@@ -84,7 +86,8 @@ impl TokioCharDevice {
     /// Doesn't check that the handle is valid or a character device.
     #[inline]
     pub unsafe fn new_unchecked<Filelike: IntoFilelike>(filelike: Filelike) -> Self {
-        Self(File::from_into_filelike(filelike))
+        let std_file = std::fs::File::from(filelike.into_filelike());
+        Self(File::from_std(std_file))
     }
 
     /// Construct a new `CharDevice` which discards writes and reads nothing.

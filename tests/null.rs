@@ -1,12 +1,8 @@
-/*
 #[cfg(feature = "async-std")]
 use char_device::AsyncStdCharDevice;
-*/
 use char_device::CharDevice;
-/*
 #[cfg(feature = "tokio")]
 use char_device::TokioCharDevice;
-*/
 
 #[test]
 fn null() {
@@ -19,7 +15,6 @@ fn null() {
     assert_eq!(char_device.read(&mut buf).unwrap(), 0);
 }
 
-/*
 #[cfg(feature = "async-std")]
 #[async_std::test]
 async fn async_std_null() {
@@ -43,4 +38,3 @@ async fn tokio_null() {
     let mut buf = vec![0_u8; 32];
     assert_eq!(char_device.read(&mut buf).await.unwrap(), 0);
 }
-*/
